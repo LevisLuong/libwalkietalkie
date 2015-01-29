@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../UrlPlayAudioHelper_WalkiTalkie/UrlPlayAudioHelper_WalkiTalkie.iml" filepath="$PROJECT_DIR$/../UrlPlayAudioHelper_WalkiTalkie/UrlPlayAudioHelper_WalkiTalkie.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testLib/testLib.iml" filepath="$PROJECT_DIR$/testLib/testLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/walkietalkie.iml" filepath="$PROJECT_DIR$/walkietalkie.iml" />
     </modules>
   </component>

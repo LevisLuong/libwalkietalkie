@@ -95,7 +95,7 @@ public class AppUtil {
         return CookieValue;
     }
 
-    public static String GET_STORAGE_AUDIO() {
+    public static String GET_STORAGE_RECORD() {
         File myDir = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment
                 .getExternalStorageState())) {
@@ -118,6 +118,45 @@ public class AppUtil {
             }
         }
         return myDir.getAbsolutePath() + "/record.amr";
+    }
+
+    public static void cleanStorageAudio() {
+        File myDir = null;
+        if (Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState())) {
+            myDir = new File(Environment.getExternalStorageDirectory()
+                    + "/dcim/walkietalkie");
+            if (myDir != null) {
+                try {
+                    //Clean all file
+                    if (myDir.exists()) {
+                        String[] children = myDir.list();
+                        for (int i = 0; i < children.length; i++) {
+                            new File(myDir, children[i]).delete();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static String GET_STORAGE_AUDIO() {
+        File myDir = null;
+        if (Environment.MEDIA_MOUNTED.equals(Environment
+                .getExternalStorageState())) {
+            myDir = new File(Environment.getExternalStorageDirectory()
+                    + "/dcim/walkietalkie");
+            if (myDir != null) {
+                if (!myDir.mkdirs()) {
+                    if (!myDir.exists()) {
+                        myDir = null;
+                    }
+                }
+            }
+        }
+        return myDir.getAbsolutePath();
     }
 
     public static boolean isNetworkConnection(Context context) {
@@ -146,7 +185,5 @@ public class AppUtil {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
-
-
     }
 }

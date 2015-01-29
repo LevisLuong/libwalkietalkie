@@ -19,11 +19,10 @@ public class Asyn_Record extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         recorder.reset();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         recorder.setAudioChannels(1);
-
-        recorder.setOutputFile(AppUtil.GET_STORAGE_AUDIO());
+        recorder.setOutputFile(AppUtil.GET_STORAGE_RECORD());
 
         recorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
@@ -37,6 +36,7 @@ public class Asyn_Record extends AsyncTask<Void, Void, Boolean> {
                 recorder.release();
             }
         });
+
         try {
             recorder.prepare();
         } catch (java.io.IOException e) {
@@ -46,6 +46,13 @@ public class Asyn_Record extends AsyncTask<Void, Void, Boolean> {
 
         recorder.start();
         return true;
+    }
+
+    public void stopRecord() {
+        if (recorder != null) {
+            recorder.stop();
+            recorder.release();
+        }
     }
 
     @Override
