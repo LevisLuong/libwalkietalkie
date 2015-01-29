@@ -3,39 +3,75 @@ package com.firefly.walkietalkie;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.*;
-import android.widget.Toast;
 
 public class LiveWebView extends WebView {
     Context mContext;
+    Handler handler;
 
     public LiveWebView(Context context, String URL) {
         super(context);
         mContext = context;
+        handler = new Handler();
         setWebViewClient(URL);
+
     }
 
-    public void executeJavascript(String function, String param) {
-        this.loadUrl("javascript:" + function + "(\'" + param + "\')");
+    public void executeJavascript(final String function, final String param) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                loadUrl("javascript:" + function + "(\'" + param + "\')");
+            }
+        });
     }
 
-    public void executeJavascript(String function, Object... params) {
-        String strParam = params[0].toString();
-        for (int i = 1; i < params.length; i++) {
-            strParam = strParam + "," + params[i];
-        }
-        AppUtil.Log_WalkieTalkie("Request : " + function + "(" + strParam + ") to server");
-        this.loadUrl("javascript:" + function + "(" + strParam + ")");
+    public void executeJavascript(final String function, final Object... params) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                String strParam = "'" + params[0].toString() + "'";
+                for (int i = 1; i < params.length; i++) {
+                    strParam = strParam + ",'" + params[i] + "'";
+                }
+                AppUtil.Log_WalkieTalkie("Request : " + function + "(" + strParam + ") to server");
+                loadUrl("javascript:" + function + "(" + strParam + ")");
+            }
+        });
     }
 
-    public void executeJavascript(String function, Boolean param) {
-        this.loadUrl("javascript:" + function + "(" + param + ")");
+    public void sendIORequest(final String funcName, final String json) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                String jsCommand = String.format("javascript:%s('%s','%s')", "sendIORequest", funcName, json.replace("\"", "\\\""));
+                AppUtil.Log_WalkieTalkie("Send to server: " + jsCommand);
+                loadUrl(jsCommand);
+            }
+        });
+
     }
 
-    public void executeJavascript(String function) {
-        this.loadUrl("javascript:" + function + "()");
+    public void loadAUrl(final String url) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                LiveWebView.super.loadUrl(url);
+            }
+        });
+    }
+
+    public void executeJavascript(final String function) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                loadUrl("javascript:" + function + "()");
+            }
+        });
+
     }
 
     @Override
@@ -84,7 +120,7 @@ public class LiveWebView extends WebView {
             }
 
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                Toast.makeText(mContext, "Error: " + description, Toast.LENGTH_SHORT).show();
+                AppUtil.Log_WalkieTalkie("Error webview: " + description);
             }
 
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
